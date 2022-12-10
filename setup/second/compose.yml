@@ -1,0 +1,28 @@
+version: "3.9"
+
+networks:
+  elastic:
+    external: true
+    name: elastic
+
+services:
+  elasticsearch02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: elasticsearch02
+    environment:
+      - cluster.name=elastic-cluster
+      - node.name=elasticsearch02
+      - discovery.seed_hosts=elasticsearch01
+      - cluster.initial_master_nodes=elasticsearch01, elasticsearch02
+    restart: always
+    networks:
+      - elastic
+    volumes:
+      - $PWD/elasticsearch/data2:/usr/share/elasticsearch/data
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
